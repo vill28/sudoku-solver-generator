@@ -45,7 +45,7 @@ def main() -> int:
     if args.generate is not None:
         sudoku = Sudoku()
         sudoku.generate(ForwardCheck(), difficulty=args.generate)
-        sudoku.board.print_board()
+        sudoku.board.print_board(args.plain)
         return 0
 
     arg_parser.print_help()
