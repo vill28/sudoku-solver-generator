@@ -48,9 +48,9 @@ def main() -> int:
         sudoku = Sudoku()
         sudoku.generate(ForwardCheck(), difficulty=args.generate)
         sudoku.board.print_board()
+        sudoku.board.save_board()
         if args.export:
-            pdf = pdf_generator.PDF()
-            pdf.save_as_pdf(sudoku.board)
+            pdf_generator.PDF().save_as_pdf(sudoku.board)
         return 0
 
     arg_parser.print_help()
