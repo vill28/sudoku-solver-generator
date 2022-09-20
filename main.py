@@ -3,7 +3,7 @@ from typing import TextIO
 
 from sudoku import Board, Sudoku
 from consistency import ForwardCheck
-from pdf_generation import pdf_generator
+from board_export import save_file
 
 def read_board(file: TextIO) -> list[list[int]]:
     lines = [line.strip().split() for line in file.readlines()]
@@ -20,7 +20,7 @@ def main() -> int:
     arg_parser = argparse.ArgumentParser(description='Sudoku solver/generator')
     arg_parser.add_argument('-c', '--count', action='store_true', help='Print backtrack count')
     arg_parser.add_argument('-p', '--plain', action='store_true', help='Print plain board')
-    arg_parser.add_argument('-e', '--export', action='store_true', help='Export board as pdf')
+    arg_parser.add_argument('-e', '--export', type=str, action='store', help='Export board to file', nargs='?', const='txt', metavar='FILE_TYPE')
     
     mode_group = arg_parser.add_mutually_exclusive_group()
     mode_group.add_argument('-s', '--solve', type=str, help='Solve sudoku puzzle', action='store', nargs='?', const='', metavar='SUDOKU_FILE')
@@ -48,9 +48,12 @@ def main() -> int:
         sudoku = Sudoku()
         sudoku.generate(ForwardCheck(), difficulty=args.generate)
         sudoku.board.print_board()
-        sudoku.board.save_board()
-        if args.export:
-            pdf_generator.PDF().save_as_pdf(sudoku.board)
+        if args.export is not None:
+            if args.export != 'pdf' and args.export != 'txt':
+                sys.stderr.write('Not supported file type!\n')
+                return 1
+            export = save_file.formats[args.export]
+            export(sudoku.board)
         return 0
 
     arg_parser.print_help()

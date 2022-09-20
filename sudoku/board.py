@@ -77,13 +77,3 @@ class Board:
                 print('┠───┼───┼───╂───┼───┼───╂───┼───┼───┨')
             
         print('┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛')
-
-    def save_board(self, plain=False) -> None:
-        f = open("./new_sudoku", "w")
-
-        for row in self.cells:
-            for cell in row:
-                f.write(f'{cell.value} ')                
-            f.write('\n')
-    
-        f.close()
