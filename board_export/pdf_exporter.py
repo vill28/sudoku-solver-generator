@@ -1,52 +1,50 @@
 from fpdf import FPDF
 from sudoku import Board
 
-# default page dimensions
-pdf_w = 210
-pdf_h = 297
-
-# default board dimensions
-board_s = 135
-grid_s = board_s / 3
-cell_s = grid_s / 3
-
-# board beginning coordinates
-x0 = (pdf_w - board_s) / 2
-y0 = (pdf_h - board_s) / 2
-
-class PDF(FPDF):
-    def draw_board(self) -> None:
-        self.set_line_width(0.8)
-        self.line(x0, y0, x0 + board_s, y0)
-        self.line(x0, y0 + board_s, x0 + board_s, y0 + board_s)
-        self.line(x0, y0, x0, y0 + board_s)
-        self.line(x0 + board_s, y0, x0 + board_s, y0 + board_s)
-        
-        self.set_line_width(0.6)
-        self.line(x0, y0 + grid_s, x0 + board_s, y0 + grid_s)
-        self.line(x0, y0 + 2*grid_s, x0 + board_s, y0 + 2*grid_s)
-        self.line(x0 + grid_s, y0, x0 + grid_s, y0 + board_s)
-        self.line(x0 + 2*grid_s, y0, x0 + 2*grid_s, y0 + board_s)
-
-        self.set_line_width(0.4)
-        for i in range(3):
-            self.line(x0, y0 + cell_s + i*grid_s, x0 + board_s, y0 + cell_s + i*grid_s)
-            self.line(x0, y0 + 2*cell_s + i*grid_s, x0 + board_s, y0 + 2*cell_s + i*grid_s)
-            self.line(x0 + cell_s + i*grid_s, y0, x0 + cell_s + i*grid_s, y0 + board_s)
-            self.line(x0 + 2*cell_s + i*grid_s, y0, x0 + 2*cell_s + i*grid_s, y0 + board_s)
-
-
 def save_to_pdf(board: Board) -> None:
-    pdf = PDF()
+    pdf = FPDF()
     pdf.add_page()
-    pdf.draw_board()
+
+    # default page dimensions
+    PDF_WIDTH = 210
+    PDF_HEIGHT = 297
+    # default board dimensions
+    BOARD_SIZE = 135
+    GRID_SIZE = BOARD_SIZE / 3
+    CELL_SIZE = GRID_SIZE / 3
+    # board beginning coordinates
+    X_0 = (PDF_WIDTH - BOARD_SIZE) / 2
+    Y_0 = (PDF_HEIGHT - BOARD_SIZE) / 2
+
+    # draw board
+    pdf.set_line_width(0.8)
+    pdf.line(X_0, Y_0, X_0 + BOARD_SIZE, Y_0)
+    pdf.line(X_0, Y_0 + BOARD_SIZE, X_0 + BOARD_SIZE, Y_0 + BOARD_SIZE)
+    pdf.line(X_0, Y_0, X_0, Y_0 + BOARD_SIZE)
+    pdf.line(X_0 + BOARD_SIZE, Y_0, X_0 + BOARD_SIZE, Y_0 + BOARD_SIZE)
+    
+    # draw grid
+    pdf.set_line_width(0.6)
+    pdf.line(X_0, Y_0 + GRID_SIZE, X_0 + BOARD_SIZE, Y_0 + GRID_SIZE)
+    pdf.line(X_0, Y_0 + 2*GRID_SIZE, X_0 + BOARD_SIZE, Y_0 + 2*GRID_SIZE)
+    pdf.line(X_0 + GRID_SIZE, Y_0, X_0 + GRID_SIZE, Y_0 + BOARD_SIZE)
+    pdf.line(X_0 + 2*GRID_SIZE, Y_0, X_0 + 2*GRID_SIZE, Y_0 + BOARD_SIZE)
+
+    # draw cells
+    pdf.set_line_width(0.4)
+    for i in range(3):
+        pdf.line(X_0, Y_0 + CELL_SIZE + i*GRID_SIZE, X_0 + BOARD_SIZE, Y_0 + CELL_SIZE + i*GRID_SIZE)
+        pdf.line(X_0, Y_0 + 2*CELL_SIZE + i*GRID_SIZE, X_0 + BOARD_SIZE, Y_0 + 2*CELL_SIZE + i*GRID_SIZE)
+        pdf.line(X_0 + CELL_SIZE + i*GRID_SIZE, Y_0, X_0 + CELL_SIZE + i*GRID_SIZE, Y_0 + BOARD_SIZE)
+        pdf.line(X_0 + 2*CELL_SIZE + i*GRID_SIZE, Y_0, X_0 + 2*CELL_SIZE + i*GRID_SIZE, Y_0 + BOARD_SIZE)
+
+    # insert the text inside cells
     pdf.set_font("Arial", 'B', size = 25)
-    # insert the text in pdf
     for i in range(9):
-        pdf.set_xy(x0 + cell_s / 3.5, y0 + i*cell_s + 0.7)
+        pdf.set_xy(X_0 + CELL_SIZE / 3.5, Y_0 + i*CELL_SIZE + 0.7)
         for cell in board.cells[i]:
             cell_value = ' ' if cell.value == 0 else f'{cell.value}'
-            pdf.cell(cell_s, cell_s, txt = cell_value, align = 'L')
+            pdf.cell(CELL_SIZE, CELL_SIZE, txt = cell_value, align = 'L')
         pdf.ln()
     
     # save the pdf with name .pdf

@@ -47,13 +47,14 @@ def main() -> int:
     if args.generate is not None:
         sudoku = Sudoku()
         sudoku.generate(ForwardCheck(), difficulty=args.generate)
-        sudoku.board.print_board()
         if args.export is not None:
-            if args.export != 'pdf' and args.export != 'txt':
+            if args.export not in save_file.formats:
                 sys.stderr.write('Not supported file type!\n')
                 return 1
             export = save_file.formats[args.export]
             export(sudoku.board)
+        else:
+            sudoku.board.print_board()
         return 0
 
     arg_parser.print_help()
